@@ -302,17 +302,20 @@
 /* ── active nav link (set by scroll spy) ──────────────────────── */
 .bar nav a.navlink.active { color: var(--mint); }
 
-/* ── waitlist email capture (pricing) ─────────────────────────── */
-.waitlist { display: flex; gap: 10px; max-width: 460px; margin: 0 auto 14px; }
-@media (max-width: 460px) { .waitlist { flex-direction: column; } }
-.waitlist input {
-  flex: 1; min-width: 0; background: var(--ink); color: var(--text);
+/* ── waitlist capture: email + message (pricing / broker pages) ── */
+.waitlist {
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: 460px; margin: 0 auto 14px; text-align: left;
+}
+.waitlist input, .waitlist textarea {
+  width: 100%; min-width: 0; background: var(--ink); color: var(--text);
   border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px;
   font-family: "IBM Plex Sans", sans-serif; font-size: 0.95rem;
 }
-.waitlist input::placeholder { color: var(--muted); }
-.waitlist input:focus { outline: none; border-color: var(--mint); }
-.waitlist .btn { white-space: nowrap; }
+.waitlist textarea { resize: vertical; min-height: 80px; }
+.waitlist input::placeholder, .waitlist textarea::placeholder { color: var(--muted); }
+.waitlist input:focus, .waitlist textarea:focus { outline: none; border-color: var(--mint); }
+.waitlist .btn { white-space: nowrap; align-self: flex-start; }
 .or { color: var(--muted); font-size: 0.82rem; margin: 0 0 16px; }
 
 /* ── coming-soon (per-broker) page ────────────────────────────── */
@@ -331,3 +334,7 @@
 a.broker { text-decoration: none; color: inherit; transition: border-color .18s ease; }
 a.broker:hover { border-color: var(--mint); text-decoration: none; }
 a.broker .bname { color: var(--text); }
+
+/* capability cards that link to the features page */
+a.card { text-decoration: none; color: inherit; display: block; }
+a.card:hover { text-decoration: none; }

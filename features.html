@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Features — BrokersMCP</title>
+<meta name="description" content="Every BrokersMCP capability explained in depth: execution, rigorous research, risk &amp; sizing, pre-trade safety, market data, signals, analytics &amp; tax, ML, and SEBI compliance." />
+<meta name="theme-color" content="#0c1d22" />
+<link rel="canonical" href="https://brokersmcp.in/features.html" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230c1d22'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2358cda3'/%3E%3C/svg%3E" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="BrokersMCP" />
+<meta property="og:title" content="Features — BrokersMCP" />
+<meta property="og:description" content="Every capability explained: execution, rigorous research, risk, pre-trade safety, data, analytics, ML, and compliance." />
+<meta property="og:url" content="https://brokersmcp.in/features.html" />
+<meta property="og:image" content="https://brokersmcp.in/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Features — BrokersMCP" />
+<meta name="twitter:image" content="https://brokersmcp.in/og.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="index.html">brokers<span class="tick">·</span>mcp</a>
+    <span class="pill" title="This site is documentation only.">🧪 DRY_RUN · docs only</span>
+    <nav>
+      <a class="navlink" href="index.html#platforms">Platforms</a>
+      <a class="navlink active" href="features.html">Features</a>
+      <a class="navlink" href="index.html#setup">Setup</a>
+      <a class="navlink" href="index.html#research">Research</a>
+      <a class="navlink" href="index.html#pricing">Pricing</a>
+      <a class="ghbtn" href="https://github.com/srinivasannagarajarao-art/brokermcp">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="coming">
+    <div class="wrap">
+      <span class="badge">Features · in depth</span>
+      <h1>Every feature, explained.</h1>
+      <p class="lede">
+        BrokersMCP is a full trading toolkit you drive from Claude — and every part of it
+        is built around one idea: be useful without ever pretending to an edge it can't
+        prove. Here's what each piece actually does, and where it's honest about its limits.
+      </p>
+    </div>
+  </section>
+
+  <!-- EXECUTION -->
+  <section class="section" id="execution">
+    <div class="wrap">
+      <p class="sec-label">Execution</p>
+      <h2 class="sec-title">Orders, brackets, exits — and proof they filled</h2>
+      <p class="sec-intro">
+        Trading isn't just "buy." You place equity, F&amp;O and MCX commodity orders,
+        horizon-aware so intraday goes MIS and delivery goes CNC — never the wrong product
+        by accident. You protect a position with an <b>OCO bracket</b> (a target and a stop
+        where one leg cancels the other), set <b>GTT</b> triggers, <b>square off</b> to
+        flatten, and cancel — then read the <b>fill / order detail</b> back to confirm what
+        actually executed and at what average price.
+      </p>
+      <ul class="nots" style="margin-top:20px">
+        <li><b>place</b> — equity / F&amp;O / commodity, MIS or CNC/NRML</li>
+        <li><b>bracket-oco</b> — protective target + stop, one cancels the other</li>
+        <li><b>gtt</b> — good-till-triggered orders; <b>square-off</b> — flatten a position</li>
+        <li><b>fills / detail / trades</b> — confirm the real fill, partial fills included</li>
+      </ul>
+      <div class="choke"><b>The honest bit.</b> Every order routes through one guarded write that honours DRY_RUN, so a real trade is impossible until you deliberately switch it off. There is no other path to the market.</div>
+    </div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="section" id="research">
+    <div class="wrap">
+      <p class="sec-label">Research &amp; rigor</p>
+      <h2 class="sec-title">A research bar strict enough to disappoint you</h2>
+      <p class="sec-intro">
+        Run a hundred backtests and a few look brilliant by chance. The research harness is
+        built to see through that. It walk-forwards every strategy over your symbols — net
+        of charges <i>and</i> slippage — and only calls a result <b>robust</b> if every
+        out-of-sample fold pays. Then it applies the multiple-testing defenses most tools
+        skip: how many "winners" pure chance would produce, the <b>deflated Sharpe</b> of
+        the best (discounted for the number of attempts), <b>Combinatorial Purged CV</b>
+        with a probability-of-overfitting score, and an <b>embargo</b> against boundary leakage.
+      </p>
+      <ul class="nots" style="margin-top:20px">
+        <li><b>Walk-forward</b>, net of charges + slippage, no look-ahead</li>
+        <li><b>Strict verdict</b> — robust / fragile / no-edge</li>
+        <li><b>Deflated Sharpe</b> + expected false positives (multiple-testing)</li>
+        <li><b>CPCV / PBO</b> and <b>--embargo</b> for an honest out-of-sample read</li>
+      </ul>
+      <div class="choke"><b>The honest bit.</b> Tested across rule-based strategies, a RandomForest, and a Transformer, this hasn't found a robust edge on retail data — and saying so, instead of selling a curve fit, is the whole point.</div>
+    </div>
+  </section>
+
+  <!-- RISK & SIZING -->
+  <section class="section" id="sizing">
+    <div class="wrap">
+      <p class="sec-label">Risk &amp; sizing</p>
+      <h2 class="sec-title">Bet less on weak evidence</h2>
+      <p class="sec-intro">
+        Position size scales with how much edge you've actually measured. <b>Fractional
+        Kelly</b> and <b>volatility targeting</b> shrink the bet when the evidence is thin —
+        to zero when there's none — and size a calm name larger than a jumpy one for the
+        same risk budget. A <b>circuit breaker</b> enforces intraday drawdown, consecutive-loss
+        and per-symbol cooldown limits, day/week/month loss halts cut new entries, and a
+        <b>drift monitor</b> flags when live results decay from the backtest.
+      </p>
+      <ul class="nots" style="margin-top:20px">
+        <li><b>Fractional Kelly</b> + <b>volatility targeting</b> (no edge → size 0)</li>
+        <li><b>Circuit breaker</b> + kill switch (HALT flag flattens and stops)</li>
+        <li><b>Loss halts</b> — daily / weekly / monthly · <b>drift</b> regime alerts</li>
+      </ul>
+      <div class="choke"><b>The honest bit.</b> Honest by construction — weak evidence produces smaller or zero bets, and a decayed edge raises a flag to re-validate rather than keep trading.</div>
+    </div>
+  </section>
+
+  <!-- PRE-TRADE SAFETY -->
+  <section class="section" id="presafety">
+    <div class="wrap">
+      <p class="sec-label">Pre-trade safety</p>
+      <h2 class="sec-title">Don't trade what you shouldn't</h2>
+      <p class="sec-intro">
+        Some orders the exchange would simply reject, and some names you shouldn't enter at
+        all. BrokersMCP catches these <i>before</i> the order goes out: it vetoes new entries
+        on <b>ASM / GSM / ESM</b> surveillance-listed symbols (trade-for-trade, price-frozen
+        names that trap intraday strategies), blocks derivative orders above the <b>F&amp;O
+        quantity-freeze</b> limit, and warns when a price is outside the day's <b>circuit
+        band</b>.
+      </p>
+      <div class="choke"><b>The honest bit.</b> These are real Indian-market rules baked into the order path — a name at its upper circuit can't be exited, so it's better to never enter it than to get stuck.</div>
+    </div>
+  </section>
+
+  <!-- MARKET DATA -->
+  <section class="section" id="data">
+    <div class="wrap">
+      <p class="sec-label">Market data &amp; F&amp;O</p>
+      <h2 class="sec-title">Reads to decide on</h2>
+      <p class="sec-intro">
+        Ask Claude for live prices and it reads them through the broker: <b>LTP</b>, full
+        <b>quotes</b> with depth, day <b>OHLC</b>, and chunked historical <b>candles</b>.
+        For derivatives it pulls the <b>option chain</b>, <b>Greeks</b>, <b>expiries</b> and
+        tradable <b>contracts</b>, plus a market-calendar/status check. Prices can come from
+        the broker live, a delayed REST source, or a streaming websocket feed.
+      </p>
+      <div class="choke"><b>The honest bit.</b> These are reads only — they inform decisions; execution always goes back through the gated order path.</div>
+    </div>
+  </section>
+
+  <!-- SIGNALS & CAPTURE -->
+  <section class="section" id="signals">
+    <div class="wrap">
+      <p class="sec-label">Signals &amp; data capture</p>
+      <h2 class="sec-title">Capture, don't assume</h2>
+      <p class="sec-intro">
+        The real order-flow signal isn't in OHLCV history, so BrokersMCP <b>captures live
+        order-book microstructure</b> (bid/ask imbalance, spread, depth) and runs a
+        forward-return study on it. Alongside that: a <b>cross-asset scanner</b> (what's in
+        play across stocks + commodities), a <b>tips scorecard</b> that grades any source's
+        calls net of charges, <b>news sentiment</b> and an <b>earnings/events calendar</b>
+        that can veto entries, and <b>fundamentals + IPO</b> data.
+      </p>
+      <div class="choke"><b>The honest bit.</b> These are candidate generators and observational tools — a scanner hit or a tip is never auto-traded, and a tip source is graded, not obeyed (forwarded tips are a known pump-and-dump vector).</div>
+    </div>
+  </section>
+
+  <!-- ANALYTICS & TAX -->
+  <section class="section" id="analytics">
+    <div class="wrap">
+      <p class="sec-label">Analytics &amp; tax</p>
+      <h2 class="sec-title">Learn from what actually happened</h2>
+      <p class="sec-intro">
+        From your real closed trades it computes <b>expectancy</b>, win rate, <b>charge
+        drag</b> (how much of gross the costs ate), and live <b>slippage</b> (actual-vs-intended
+        fill cost) — broken down by symbol, time-of-day, side and horizon. It also sorts
+        closed trades into India tax buckets: speculative (intraday) / <b>STCG</b> / <b>LTCG</b>,
+        net of charges, with the ₹1.25L exemption and the 23-Jul-2024 split.
+      </p>
+      <div class="choke"><b>The honest bit.</b> The tax view is a <i>preparation aid, not ITR-grade</i> — exact filing needs raw contract notes, full FIFO and a CA.</div>
+    </div>
+  </section>
+
+  <!-- MACHINE LEARNING -->
+  <section class="section" id="ml">
+    <div class="wrap">
+      <p class="sec-label">Machine learning</p>
+      <h2 class="sec-title">No special treatment</h2>
+      <p class="sec-intro">
+        ML is available but earns its place the same way everything else does. A causal
+        <b>RandomForest</b> with price + calendar/seasonality features, and a small
+        time-series <b>Transformer</b>, are optional research candidates — judged by the
+        <i>same</i> walk-forward, deflated-Sharpe and CPCV bar as the rule-based strategies.
+      </p>
+      <div class="choke"><b>The honest bit.</b> On retail OHLCV they show no edge (they abstain) — model complexity doesn't manufacture an edge the data lacks, and the rigor catches it rather than being fooled by a pretty backtest.</div>
+    </div>
+  </section>
+
+  <!-- COMPLIANCE -->
+  <section class="section" id="compliance">
+    <div class="wrap">
+      <p class="sec-label">Compliance</p>
+      <h2 class="sec-title">Built for the rules</h2>
+      <p class="sec-intro">
+        Every order is stamped with an exchange <b>Algo-ID</b> for the audit trail, and the
+        write path is <b>rate-limited</b> under SEBI's retail-algo threshold (~10 orders/sec)
+        so a burst can't reclassify you. These are wired into the same chokepoint as DRY_RUN.
+      </p>
+      <div class="choke"><b>The honest bit.</b> Self-use is fine; <i>selling</i> an order-placing algo to others in India needs broker empanelment + exchange approval under SEBI's framework — verify before any commercial use.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="activate">
+        <h3>Run it with Claude</h3>
+        <p>One Docker command, a config block, your own broker keys. DRY_RUN by default.</p>
+        <div class="cta-row" style="justify-content:center">
+          <a class="btn btn-primary" href="index.html#setup">Set it up →</a>
+          <a class="btn btn-ghost" href="index.html#pricing">Pricing</a>
+        </div>
+        <p class="back" style="margin-top:18px"><a href="index.html">← back to BrokersMCP</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="disclaimer">
+      <strong style="color:var(--text)">Not investment advice.</strong>
+      BrokersMCP is software for automating your own trades. It defaults to DRY_RUN and, by
+      its own rigorous testing, has shown no proven edge. Markets carry risk; you are
+      responsible for every order you place and for complying with SEBI and exchange rules.
+    </div>
+    <div class="foot-row">
+      <span>brokers<span style="color:var(--mint)">·</span>mcp — a safe trading MCP for Claude. Groww live; more brokers coming.</span>
+      <span><a href="https://github.com/srinivasannagarajarao-art/brokermcp">GitHub ↗</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

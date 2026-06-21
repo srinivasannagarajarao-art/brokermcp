@@ -35,7 +35,7 @@
     <span class="pill" title="This site is documentation only.">🧪 DRY_RUN · docs only</span>
     <nav>
       <a class="navlink" href="#platforms">Platforms</a>
-      <a class="navlink" href="#capabilities">Capabilities</a>
+      <a class="navlink" href="features.html">Features</a>
       <a class="navlink" href="#setup">Setup</a>
       <a class="navlink" href="#research">Research</a>
       <a class="navlink" href="#pricing">Pricing</a>
@@ -89,9 +89,11 @@
         broker does.
       </p>
       <div class="brokers">
-        <div class="broker"><span class="bname">Groww</span><span class="status status-live">● Live</span></div>
+        <a class="broker" href="groww.html"><span class="bname">Groww</span><span class="status status-live">● Live ↗</span></a>
         <a class="broker" href="zerodha.html"><span class="bname">Zerodha</span><span class="status status-soon">Coming ↗</span></a>
         <a class="broker" href="upstox.html"><span class="bname">Upstox</span><span class="status status-soon">Coming ↗</span></a>
+        <a class="broker" href="angelone.html"><span class="bname">Angel One</span><span class="status status-soon">Coming ↗</span></a>
+        <a class="broker" href="dhan.html"><span class="bname">Dhan</span><span class="status status-soon">Coming ↗</span></a>
         <div class="broker"><span class="bname">More</span><span class="status status-soon">Planned</span></div>
       </div>
     </div>
@@ -108,69 +110,72 @@
       </p>
       <div class="grid">
 
-        <div class="card reveal">
+        <a class="card" href="features.html#execution">
           <span class="kicker">Execution</span>
           <h3>Orders, brackets &amp; exits</h3>
           <p>Equity, F&amp;O and MCX commodity orders, horizon-aware (MIS intraday / CNC delivery). Protective OCO brackets, GTT triggers, square-off, and fill confirmation.</p>
           <code>place · bracket-oco · gtt · square-off</code>
-        </div>
+        </a>
 
-        <div class="card reveal">
+        <a class="card" href="features.html#research">
           <span class="kicker">Research &amp; rigor</span>
           <h3>Find an edge, honestly</h3>
           <p>Walk-forward every strategy, net of charges. Deflated Sharpe, expected-false-positives and Combinatorial Purged CV (PBO) catch the multiple-testing trap.</p>
           <code>make research · --cpcv · --embargo</code>
-        </div>
+        </a>
 
-        <div class="card reveal">
+        <a class="card" href="features.html#sizing">
           <span class="kicker">Risk &amp; sizing</span>
           <h3>Bet less on weak evidence</h3>
           <p>Fractional Kelly and volatility targeting size down when the edge is thin — to zero when there's none. Circuit breaker, loss halts and a drift monitor.</p>
           <code>KELLY_FRACTION · TARGET_DAILY_VOL</code>
-        </div>
+        </a>
 
-        <div class="card reveal">
+        <a class="card" href="features.html#presafety">
           <span class="kicker">Pre-trade safety</span>
           <h3>Don't trade what you shouldn't</h3>
           <p>Vetoes entries on ASM/GSM/ESM surveillance names, blocks orders above the F&amp;O quantity-freeze limit, and warns when a price is outside the day's circuit band.</p>
           <code>SURVEILLANCE_GATE · FNO_FREEZE_QTY</code>
-        </div>
+        </a>
 
-        <div class="card reveal">
+        <a class="card" href="features.html#data">
           <span class="kicker">Market data</span>
           <h3>Reads &amp; F&amp;O analytics</h3>
           <p>LTP, quotes, OHLC and candles; option chain, Greeks and expiries; a market calendar. Live Groww feed, delayed REST, or a websocket provider.</p>
           <code>ltp · quote · option-chain · greeks</code>
-        </div>
+        </a>
 
-        <div class="card reveal">
+        <a class="card" href="features.html#signals">
           <span class="kicker">Signals &amp; data</span>
           <h3>Capture, don't assume</h3>
           <p>Live order-book microstructure capture, a cross-asset scanner, a tip-source scorecard, news sentiment, an earnings/event calendar, and fundamentals + IPO data.</p>
           <code>microstructure · scan · tips · news</code>
-        </div>
+        </a>
 
-        <div class="card reveal">
+        <a class="card" href="features.html#analytics">
           <span class="kicker">Analytics &amp; tax</span>
           <h3>Learn from what happened</h3>
           <p>Expectancy, charge drag and live slippage (TCA) from real closed trades — plus an India tax classification (speculative / STCG / LTCG) as a prep aid.</p>
           <code>make report · --tax</code>
-        </div>
+        </a>
 
-        <div class="card reveal">
+        <a class="card" href="features.html#ml">
           <span class="kicker">Machine learning</span>
           <h3>No special treatment</h3>
           <p>A RandomForest with calendar/seasonality features and a small time-series Transformer are optional research candidates — judged by the same deflated-Sharpe bar as the rest.</p>
           <code>--group ml · --group dl</code>
-        </div>
+        </a>
 
-        <div class="card reveal">
+        <a class="card" href="features.html#compliance">
           <span class="kicker">Compliance</span>
           <h3>Built for the rules</h3>
           <p>Stamps every order with an exchange Algo-ID for the audit trail and rate-limits the write path under SEBI's retail-algo threshold.</p>
           <code>ALGO_ID · MAX_ORDERS_PER_SEC</code>
-        </div>
+        </a>
 
+      </div>
+      <div style="margin-top:28px">
+        <a class="btn btn-ghost" href="features.html">See every feature in depth →</a>
       </div>
     </div>
   </section>
@@ -394,11 +399,10 @@
           trading profits</strong>. By its own rigorous testing, this system has shown no
           proven edge; what it sells is safe, capable tooling.
         </p>
-        <!-- Activate the waitlist: create a free form at formspree.io and replace
-             YOUR_FORM_ID with your form's id (e.g. xyzabcd). Works on static Pages. -->
-        <form class="waitlist" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <form class="waitlist" action="https://formspree.io/f/maqgwgby" method="POST">
           <input type="email" name="email" required placeholder="you@email.com"
                  aria-label="Email address" />
+          <textarea name="message" rows="3" placeholder="Anything you'd like us to know? (optional)" aria-label="Message"></textarea>
           <button type="submit" class="btn btn-primary">Join the waitlist</button>
         </form>
         <p class="or">or</p>
