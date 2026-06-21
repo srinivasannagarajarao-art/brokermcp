@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BrokerMCP — a safe trading MCP for Claude</title>
+<meta name="description" content="A safe trading MCP for Claude — Groww live, more brokers coming. DRY_RUN by default, rigorous research, and an honest verdict: no proven edge." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0c1d22;
+    --panel: #102a31;
+    --panel-2: #16363f;
+    --line: #1f4750;
+    --text: #e8f0ec;
+    --muted: #8aa4a7;
+    --mint: #58cda3;     /* safe / robust / DRY — the affirming state */
+    --coral: #ec8266;    /* live / caution */
+    --amber: #d6b86a;    /* fragile — used ONLY in the verdict legend */
+    --maxw: 1100px;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--mint); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* ── top status bar ───────────────────────────────────────── */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(12, 29, 34, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar { display: flex; align-items: center; gap: 16px; height: 60px; }
+  .brand {
+    font-family: "Space Grotesk", sans-serif; font-weight: 700;
+    font-size: 1.05rem; letter-spacing: -0.01em; color: var(--text);
+  }
+  .brand:hover { text-decoration: none; }
+  .brand .tick { color: var(--mint); }
+  .pill {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem;
+    color: var(--mint); border: 1px solid var(--line);
+    background: rgba(88, 205, 163, 0.07);
+    padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+  }
+  .bar nav { margin-left: auto; display: flex; gap: 20px; align-items: center; }
+  .bar nav a {
+    color: var(--muted); font-size: 0.86rem; font-weight: 500;
+  }
+  .bar nav a:hover { color: var(--text); text-decoration: none; }
+  .ghbtn {
+    color: var(--text) !important; border: 1px solid var(--line);
+    padding: 7px 14px; border-radius: 8px; font-size: 0.84rem;
+  }
+  .ghbtn:hover { border-color: var(--mint); text-decoration: none; }
+  @media (max-width: 760px) { .bar nav .navlink { display: none; } }
+  /* On phones, drop the flavor pill so brand + GitHub always fit (no overflow). */
+  @media (max-width: 560px) {
+    .pill { display: none; }
+    .wrap { padding: 0 18px; }
+    .bar { gap: 10px; }
+  }
+
+  /* ── hero ─────────────────────────────────────────────────── */
+  .hero { padding: 84px 0 64px; }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.78rem;
+    color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  h1 {
+    font-family: "Space Grotesk", sans-serif; font-weight: 700;
+    font-size: clamp(2.1rem, 5.2vw, 3.4rem); line-height: 1.08;
+    letter-spacing: -0.02em; margin: 0 0 22px; max-width: 16ch;
+  }
+  h1 .em { color: var(--mint); }
+  .lede { font-size: 1.12rem; color: var(--muted); max-width: 60ch; margin: 0 0 32px; }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 56px; }
+  .btn {
+    font-family: "IBM Plex Sans", sans-serif; font-weight: 600; font-size: 0.95rem;
+    padding: 12px 22px; border-radius: 9px; cursor: pointer; border: 1px solid transparent;
+  }
+  .btn-primary { background: var(--mint); color: #06231a !important; }
+  .btn-primary:hover { text-decoration: none; filter: brightness(1.07); }
+  .btn-ghost { border-color: var(--line); color: var(--text) !important; }
+  .btn-ghost:hover { border-color: var(--mint); text-decoration: none; }
+
+  /* ── signature: the research-verdict terminal ─────────────── */
+  .term {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); overflow: hidden; max-width: 820px;
+    box-shadow: 0 24px 60px -30px rgba(0,0,0,0.7);
+  }
+  .term-top {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 16px; border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--line); }
+  .term-title {
+    margin-left: 8px; font-family: "IBM Plex Mono", monospace;
+    font-size: 0.76rem; color: var(--muted);
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .term-body {
+    padding: 18px 20px; font-family: "IBM Plex Mono", monospace;
+    font-size: 0.82rem; line-height: 1.85; overflow-x: auto;
+  }
+  .term-body .ln { white-space: pre; }
+  .c-mut { color: var(--muted); }
+  .c-mint { color: var(--mint); }
+  .c-coral { color: var(--coral); }
+  .c-amber { color: var(--amber); }
+  .prompt { color: var(--mint); }
+
+  /* ── generic section ──────────────────────────────────────── */
+  .section { padding: 64px 0; border-top: 1px solid var(--line); }
+  .sec-label {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.74rem;
+    color: var(--mint); letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .sec-title {
+    font-family: "Space Grotesk", sans-serif; font-weight: 700;
+    font-size: clamp(1.5rem, 3.4vw, 2.1rem); letter-spacing: -0.01em;
+    margin: 0 0 14px;
+  }
+  .sec-intro { color: var(--muted); max-width: 64ch; margin: 0 0 36px; font-size: 1.02rem; }
+
+  /* ── capability grid ──────────────────────────────────────── */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 880px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 580px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 22px;
+    transition: border-color .18s ease, transform .18s ease;
+  }
+  .card:hover { border-color: var(--mint); transform: translateY(-3px); }
+  @media (prefers-reduced-motion: reduce) { .card:hover { transform: none; } }
+  .card h3 {
+    font-family: "Space Grotesk", sans-serif; font-weight: 700;
+    font-size: 1.08rem; margin: 0 0 6px;
+  }
+  .card .kicker {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.68rem;
+    color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase;
+    display: block; margin-bottom: 12px;
+  }
+  .card p { color: var(--muted); font-size: 0.92rem; margin: 0 0 14px; }
+  .card code {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.76rem;
+    color: var(--text); background: var(--ink);
+    border: 1px solid var(--line); border-radius: 6px;
+    padding: 3px 8px; display: inline-block;
+  }
+
+  /* ── safety band ──────────────────────────────────────────── */
+  .band { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 36px; }
+  .safety-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 24px; }
+  @media (max-width: 720px) { .safety-grid { grid-template-columns: 1fr; } }
+  .safety-grid h4 {
+    font-family: "Space Grotesk", sans-serif; font-size: 1rem; margin: 0 0 6px;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .safety-grid p { color: var(--muted); font-size: 0.92rem; margin: 0; }
+  .flag {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.66rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 5px;
+  }
+  .flag-dry { color: var(--mint); border: 1px solid var(--mint); }
+  .flag-live { color: var(--coral); border: 1px solid var(--coral); }
+
+  /* ── verdict legend ───────────────────────────────────────── */
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+  .verdict {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.82rem;
+    border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px;
+    flex: 1; min-width: 220px;
+  }
+  .verdict b { display: block; margin-bottom: 4px; font-size: 0.9rem; }
+  .verdict span { color: var(--muted); font-family: "IBM Plex Sans", sans-serif; font-size: 0.84rem; }
+  .v-robust b { color: var(--mint); }
+  .v-fragile b { color: var(--amber); }
+  .v-noedge b { color: var(--muted); }
+
+  /* ── interfaces ───────────────────────────────────────────── */
+  .ifaces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 720px) { .ifaces { grid-template-columns: 1fr; } }
+
+  /* ── quickstart ───────────────────────────────────────────── */
+  .steps { font-family: "IBM Plex Mono", monospace; font-size: 0.85rem; }
+  pre.code {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px 22px; overflow-x: auto; font-family: "IBM Plex Mono", monospace;
+    font-size: 0.84rem; line-height: 1.9; color: var(--text); margin: 0;
+  }
+  pre.code .cmt { color: var(--muted); }
+  pre.code .ok { color: var(--mint); }
+
+  /* ── footer ───────────────────────────────────────────────── */
+  footer { border-top: 1px solid var(--line); padding: 44px 0 60px; color: var(--muted); }
+  .disclaimer {
+    border: 1px solid var(--line); border-left: 3px solid var(--coral);
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 28px;
+    font-size: 0.88rem; color: var(--muted); background: var(--panel);
+  }
+  .foot-row { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 0.85rem; }
+
+  /* ── architecture: two systems, one broker ───────────────── */
+  .arch { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .arch { grid-template-columns: 1fr; } }
+  .sys {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 24px;
+    min-width: 0;  /* let the panel shrink so .flow scrolls internally, no page overflow */
+  }
+  .sys h3 { font-family: "Space Grotesk", sans-serif; font-size: 1.1rem; margin: 0 0 4px; }
+  .sys .kicker {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; color: var(--muted);
+    letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-bottom: 14px;
+  }
+  .flow {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; color: var(--text);
+    background: var(--ink); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 14px; margin: 0 0 14px; overflow-x: auto; white-space: nowrap;
+  }
+  .flow .arrow { color: var(--mint); }
+  .sys p { color: var(--muted); font-size: 0.92rem; margin: 0; }
+  .choke {
+    margin-top: 16px; border: 1px solid var(--line); border-left: 3px solid var(--mint);
+    border-radius: 8px; padding: 14px 18px; background: var(--panel);
+    font-size: 0.92rem; color: var(--muted);
+  }
+  .choke b { color: var(--text); }
+
+  /* ── validation pipeline (a real ordered sequence) ────────── */
+  .pipe { display: flex; flex-direction: column; gap: 0; margin-top: 8px; }
+  .stage { display: grid; grid-template-columns: 56px 1fr; gap: 18px; padding: 18px 0; border-top: 1px solid var(--line); }
+  .stage:first-child { border-top: 0; }
+  .stage .no {
+    font-family: "IBM Plex Mono", monospace; font-size: 1.1rem; font-weight: 600;
+    color: var(--mint);
+  }
+  .stage h4 { font-family: "Space Grotesk", sans-serif; font-size: 1.02rem; margin: 0 0 4px; }
+  .stage p { color: var(--muted); font-size: 0.92rem; margin: 0; }
+  .stage code {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.74rem; color: var(--text);
+    background: var(--ink); border: 1px solid var(--line); border-radius: 5px; padding: 2px 7px;
+  }
+
+  /* ── won't do (honest non-features) ───────────────────────── */
+  .nots { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; margin-top: 8px; }
+  @media (max-width: 640px) { .nots { grid-template-columns: 1fr; } }
+  .nots li { list-style: none; padding-left: 26px; position: relative; color: var(--muted); font-size: 0.95rem; }
+  .nots { padding: 0; margin: 8px 0 0; }
+  .nots li::before {
+    content: "✕"; position: absolute; left: 0; top: 0;
+    color: var(--coral); font-family: "IBM Plex Mono", monospace; font-weight: 600;
+  }
+  .nots li b { color: var(--text); font-weight: 600; }
+
+  /* ── supported platforms ──────────────────────────────────── */
+  .brokers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 820px) { .brokers { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 440px) { .brokers { grid-template-columns: 1fr; } }
+  .broker {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; min-width: 0;
+  }
+  .broker .bname { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 1rem; }
+  .status {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.62rem; font-weight: 600;
+    padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .status-live { color: var(--mint); border: 1px solid var(--mint); }
+  .status-soon { color: var(--muted); border: 1px solid var(--line); }
+
+  /* ── pricing / activate (placeholder) ─────────────────────── */
+  .activate {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 40px 36px; text-align: center; max-width: 640px; margin: 0 auto;
+  }
+  .activate .soon {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.7rem; color: var(--amber);
+    border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px;
+    display: inline-block; margin-bottom: 20px;
+  }
+  .activate h3 { font-family: "Space Grotesk", sans-serif; font-size: 1.4rem; margin: 0 0 12px; }
+  .activate p { color: var(--muted); margin: 0 auto 24px; max-width: 48ch; }
+  .btn-disabled { background: var(--panel-2); color: var(--muted) !important; border: 1px solid var(--line); cursor: default; }
+  .btn-disabled:hover { text-decoration: none; filter: none; }
+  .fineprint { font-size: 0.82rem; color: var(--muted); margin-top: 18px; }
+
+  :focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top">broker<span class="tick">·</span>mcp</a>
+    <span class="pill" title="This site is documentation only.">🧪 DRY_RUN · docs only</span>
+    <nav>
+      <a class="navlink" href="#platforms">Platforms</a>
+      <a class="navlink" href="#capabilities">Capabilities</a>
+      <a class="navlink" href="#setup">Setup</a>
+      <a class="navlink" href="#research">Research</a>
+      <a class="navlink" href="#pricing">Pricing</a>
+      <a class="ghbtn" href="https://github.com/srinivasannagarajarao-art/brokermcp">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">MCP server for Claude · Groww live · Zerodha &amp; more coming</p>
+      <h1>Most trading bots sell you an edge. This one <span class="em">tests whether there is one</span> — and refuses to fake it.</h1>
+      <p class="lede">
+        A safe trading toolkit you run as one Docker command and drive through Claude.
+        Bring your own broker keys — it never holds your money, and real orders stay off
+        by default. Its research harness is rigorous enough to tell you when there's no
+        edge to trade.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#setup">Use it with Claude</a>
+        <a class="btn btn-ghost" href="#capabilities">Explore the capabilities</a>
+        <a class="btn btn-ghost" href="#pricing">Pricing</a>
+      </div>
+
+      <div class="term reveal" role="img" aria-label="Sample output of the research command showing zero robust strategies and a deflated Sharpe that fails the test.">
+        <div class="term-top">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="term-title">make research SYMBOL=WIPRO,TCS,INFY,RELIANCE,… DAYS=45</span>
+        </div>
+        <div class="term-body">
+<div class="ln"><span class="c-mut"># walk-forward, net of charges + slippage, every strategy × symbol</span></div>
+<div class="ln"><span class="c-mint">0/72</span> <span class="c-mut">robust</span>, <span class="c-amber">3/72</span> <span class="c-mut">merely net-positive</span></div>
+<div class="ln"><span class="c-mut">multiple-testing: 72 trials → ~3.6 'robust' expected by CHANCE; you found</span> <span class="c-coral">0</span></div>
+<div class="ln"><span class="c-mut">deflated Sharpe of the best:</span> <span class="c-coral">0.00 → FAILS</span> <span class="c-mut">(≥0.95 needed)</span></div>
+<div class="ln c-mut">verdict: no proven edge — and that is the honest, useful answer.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORMS -->
+  <section class="section" id="platforms">
+    <div class="wrap">
+      <p class="sec-label">Supported brokers</p>
+      <h2 class="sec-title">One toolkit, more brokers over time</h2>
+      <p class="sec-intro">
+        Groww is live today. The broker layer is being abstracted so the same Claude
+        tools work across platforms — your strategies and research don't change when the
+        broker does.
+      </p>
+      <div class="brokers">
+        <div class="broker"><span class="bname">Groww</span><span class="status status-live">● Live</span></div>
+        <div class="broker"><span class="bname">Zerodha</span><span class="status status-soon">Coming</span></div>
+        <div class="broker"><span class="bname">Upstox</span><span class="status status-soon">Coming</span></div>
+        <div class="broker"><span class="bname">More</span><span class="status status-soon">Planned</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPABILITIES -->
+  <section class="section" id="capabilities">
+    <div class="wrap">
+      <p class="sec-label">What it does</p>
+      <h2 class="sec-title">Capabilities</h2>
+      <p class="sec-intro">
+        Every order flows through one guarded path, so the safety switch can't be bypassed.
+        Everything below is built on that foundation.
+      </p>
+      <div class="grid">
+
+        <div class="card reveal">
+          <span class="kicker">Execution</span>
+          <h3>Orders, brackets &amp; exits</h3>
+          <p>Equity, F&amp;O and MCX commodity orders, horizon-aware (MIS intraday / CNC delivery). Protective OCO brackets, GTT triggers, square-off, and fill confirmation.</p>
+          <code>place · bracket-oco · gtt · square-off</code>
+        </div>
+
+        <div class="card reveal">
+          <span class="kicker">Research &amp; rigor</span>
+          <h3>Find an edge, honestly</h3>
+          <p>Walk-forward every strategy, net of charges. Deflated Sharpe, expected-false-positives and Combinatorial Purged CV (PBO) catch the multiple-testing trap.</p>
+          <code>make research · --cpcv · --embargo</code>
+        </div>
+
+        <div class="card reveal">
+          <span class="kicker">Risk &amp; sizing</span>
+          <h3>Bet less on weak evidence</h3>
+          <p>Fractional Kelly and volatility targeting size down when the edge is thin — to zero when there's none. Circuit breaker, loss halts and a drift monitor.</p>
+          <code>KELLY_FRACTION · TARGET_DAILY_VOL</code>
+        </div>
+
+        <div class="card reveal">
+          <span class="kicker">Pre-trade safety</span>
+          <h3>Don't trade what you shouldn't</h3>
+          <p>Vetoes entries on ASM/GSM/ESM surveillance names, blocks orders above the F&amp;O quantity-freeze limit, and warns when a price is outside the day's circuit band.</p>
+          <code>SURVEILLANCE_GATE · FNO_FREEZE_QTY</code>
+        </div>
+
+        <div class="card reveal">
+          <span class="kicker">Market data</span>
+          <h3>Reads &amp; F&amp;O analytics</h3>
+          <p>LTP, quotes, OHLC and candles; option chain, Greeks and expiries; a market calendar. Live Groww feed, delayed REST, or a websocket provider.</p>
+          <code>ltp · quote · option-chain · greeks</code>
+        </div>
+
+        <div class="card reveal">
+          <span class="kicker">Signals &amp; data</span>
+          <h3>Capture, don't assume</h3>
+          <p>Live order-book microstructure capture, a cross-asset scanner, a tip-source scorecard, news sentiment, an earnings/event calendar, and fundamentals + IPO data.</p>
+          <code>microstructure · scan · tips · news</code>
+        </div>
+
+        <div class="card reveal">
+          <span class="kicker">Analytics &amp; tax</span>
+          <h3>Learn from what happened</h3>
+          <p>Expectancy, charge drag and live slippage (TCA) from real closed trades — plus an India tax classification (speculative / STCG / LTCG) as a prep aid.</p>
+          <code>make report · --tax</code>
+        </div>
+
+        <div class="card reveal">
+          <span class="kicker">Machine learning</span>
+          <h3>No special treatment</h3>
+          <p>A RandomForest with calendar/seasonality features and a small time-series Transformer are optional research candidates — judged by the same deflated-Sharpe bar as the rest.</p>
+          <code>--group ml · --group dl</code>
+        </div>
+
+        <div class="card reveal">
+          <span class="kicker">Compliance</span>
+          <h3>Built for the rules</h3>
+          <p>Stamps every order with an exchange Algo-ID for the audit trail and rate-limits the write path under SEBI's retail-algo threshold.</p>
+          <code>ALGO_ID · MAX_ORDERS_PER_SEC</code>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section class="section" id="architecture">
+    <div class="wrap">
+      <p class="sec-label">How it's built</p>
+      <h2 class="sec-title">Two systems, one broker</h2>
+      <p class="sec-intro">
+        A deterministic code path and an AI-agent path run in parallel and share a
+        single broker. Neither can reach the market except through one guarded write
+        — so the safety switch governs everything, no matter who pulls the trigger.
+      </p>
+      <div class="arch">
+        <div class="sys">
+          <span class="kicker">Deterministic</span>
+          <h3>Code path</h3>
+          <p class="flow">python main.py <span class="arrow">→</span> core/ broker <span class="arrow">→</span> Strategy <span class="arrow">→</span> Postgres</p>
+          <p>Your rules, headless and repeatable. A strategy reads prices, decides, and
+          the runner sizes, risk-checks, places, and records — hydrating open positions
+          on restart so it's idempotent.</p>
+        </div>
+        <div class="sys">
+          <span class="kicker">Assisted</span>
+          <h3>Agent path</h3>
+          <p class="flow">claude /intraday-trade <span class="arrow">→</span> sub-agents <span class="arrow">→</span> MCP tools</p>
+          <p>Research, signal, and risk sub-agents reason over the same data through MCP
+          tools. Insulated from the broker — only the execution step can place an order,
+          and it obeys the same gates.</p>
+        </div>
+      </div>
+      <div class="choke">
+        <b>The write chokepoint.</b> Every mutating call routes through one guard that
+        honours DRY_RUN, rate-limits under SEBI's algo threshold, stamps the Algo-ID,
+        and degrades to a structured rejection instead of crashing. Add a new order
+        type and it goes through here too — there is no other door.
+      </div>
+    </div>
+  </section>
+
+  <!-- SAFETY -->
+  <section class="section" id="safety">
+    <div class="wrap">
+      <p class="sec-label">Safety model</p>
+      <h2 class="sec-title">Real money is opt-in, never accidental</h2>
+      <p class="sec-intro">
+        The default state places no real orders. You have to deliberately, repeatedly choose
+        otherwise — and a beginner lock can make real orders impossible even then.
+      </p>
+      <div class="band reveal">
+        <div class="safety-grid">
+          <div>
+            <h4><span class="flag flag-dry">DRY_RUN</span> on by default</h4>
+            <p>Intended orders are logged, never sent. The whole order path runs and the books update on paper — so you can trust the logic before a single rupee moves.</p>
+          </div>
+          <div>
+            <h4>Learning-mode lock</h4>
+            <p>With <code class="mono">LEARNING_MODE=true</code>, real orders are impossible — it overrides the live switch entirely, so a beginner can't place one by mistake.</p>
+          </div>
+          <div>
+            <h4>One write chokepoint</h4>
+            <p>Every mutating call routes through a single guard that honours DRY_RUN before any SDK call. The safety switch can't be bypassed because there's nowhere else to go.</p>
+          </div>
+          <div>
+            <h4><span class="flag flag-live">LIVE</span> takes real intent</h4>
+            <p>Going live is a typed confirmation, and even then the kill switch (<code class="mono">HALT.flag</code>) flattens every position and stops on contact.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH / HONEST VERDICT -->
+  <section class="section" id="research">
+    <div class="wrap">
+      <p class="sec-label">The honest verdict</p>
+      <h2 class="sec-title">A research bar strict enough to disappoint you</h2>
+      <p class="sec-intro">
+        Run a hundred backtests and a few will look brilliant by chance. The harness is built
+        to see through that. A strategy only earns a verdict it can defend out of sample.
+      </p>
+      <div class="pipe">
+        <div class="stage">
+          <div class="no mono">01</div>
+          <div>
+            <h4>Walk-forward, net of charges</h4>
+            <p>Optimize on each in-sample fold, score the winner on the next, unseen
+            fold — after realistic charges and slippage. No look-ahead, next-bar fills.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="no mono">02</div>
+          <div>
+            <h4>A strict verdict</h4>
+            <p>A row is <code>robust</code> only if <em>every</em> out-of-sample fold pays
+            and it took enough trades. One lucky fold is <code>fragile</code>; not paying
+            is <code>no-edge</code>.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="no mono">03</div>
+          <div>
+            <h4>Deflated for multiple testing</h4>
+            <p>Reports how many "winners" pure chance would produce across all trials, and
+            the <b>deflated Sharpe</b> of the best — discounted for the number of attempts.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="no mono">04</div>
+          <div>
+            <h4>Combinatorial Purged CV</h4>
+            <p>Tests every C(N,k) train/test split, not one path, and ranks by the
+            <b>Probability of Backtest Overfitting</b> — how often "best in training" fails
+            out of sample. <code>--cpcv</code></p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="no mono">05</div>
+          <div>
+            <h4>Embargo against leakage</h4>
+            <p>Drops bars at each fold boundary so a trade straddling the train/test line
+            can't leak information. <code>--embargo</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend reveal">
+        <div class="verdict v-robust">
+          <b>robust</b>
+          <span>Every out-of-sample fold positive, with enough trades to mean something.</span>
+        </div>
+        <div class="verdict v-fragile">
+          <b>fragile</b>
+          <span>Positive in aggregate, but one fold lost or too few trades — a likely fluke.</span>
+        </div>
+        <div class="verdict v-noedge">
+          <b>no-edge</b>
+          <span>Doesn't pay out of sample, net of charges. The most common — and honest — result.</span>
+        </div>
+      </div>
+      <p class="sec-intro" style="margin-top:32px;">
+        Tested across rule-based strategies, a RandomForest, and a Transformer, this universe
+        showed <strong style="color:var(--text)">no robust edge</strong>. Model complexity didn't
+        manufacture one — and the platform's value is telling you so instead of selling you a
+        curve fit.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT IT WON'T DO -->
+  <section class="section" id="wont">
+    <div class="wrap">
+      <p class="sec-label">By design</p>
+      <h2 class="sec-title">What it won't do</h2>
+      <p class="sec-intro">
+        The constraints are the product. Each of these is a deliberate refusal, not a
+        missing feature.
+      </p>
+      <ul class="nots">
+        <li><b>Place a real order by default.</b> DRY_RUN is on until you turn it off, and a learning-mode lock can make real orders impossible entirely.</li>
+        <li><b>Auto-trade tips or signals.</b> Forwarded tips are captured and graded against their own forward returns — never obeyed. They're a known pump-and-dump vector.</li>
+        <li><b>Fake a backtest.</b> Net of charges and slippage, next-bar fills, no look-ahead — and it states its own survivorship and corporate-action caveats out loud.</li>
+        <li><b>Claim an edge it can't defend.</b> If a strategy can't clear the deflated-Sharpe bar out of sample, the verdict is no-edge — including the ML and Transformer candidates.</li>
+        <li><b>Hold your money or your keys.</b> You self-host with your own credentials; nothing is pooled and nothing is custodial.</li>
+        <li><b>Pretend it's tax advice.</b> The India tax classification is a preparation aid — real filing needs contract notes, full FIFO, and a CA.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SETUP: USE IT WITH CLAUDE -->
+  <section class="section" id="setup">
+    <div class="wrap">
+      <p class="sec-label">How to use it</p>
+      <h2 class="sec-title">Run it with Claude in four steps</h2>
+      <p class="sec-intro">
+        No clone, no Python — just Docker and a config block. The server runs on your
+        machine; your credentials never leave it.
+      </p>
+      <div class="pipe">
+        <div class="stage">
+          <div class="no mono">01</div>
+          <div><h4>Install Docker Desktop</h4><p>The only prerequisite. Nothing else to install.</p></div>
+        </div>
+        <div class="stage">
+          <div class="no mono">02</div>
+          <div><h4>Get your key + broker credentials</h4><p>An activation key (see pricing below) and your own Groww API credentials — they stay on your machine.</p></div>
+        </div>
+        <div class="stage">
+          <div class="no mono">03</div>
+          <div><h4>Add the MCP to Claude</h4><p>Paste the block below into Claude Desktop's config (or Claude Code's <code>.mcp.json</code>), filling in your key and credentials.</p></div>
+        </div>
+        <div class="stage">
+          <div class="no mono">04</div>
+          <div><h4>Ask Claude</h4><p>“What's the LTP of WIPRO?” · “Run research on TCS, INFY” · “Place a buy of 1 WIPRO.” Orders are DRY_RUN until you explicitly opt in.</p></div>
+        </div>
+      </div>
+<pre class="code">{
+  "mcpServers": {
+    "brokermcp": {
+      "command": "docker",
+      "args": [
+        "run", "--init", "--rm", "-i", "--pull=always",
+        "-e", "LICENSE_KEY",
+        "-e", "GROWW_AUTH_METHOD",
+        "-e", "GROWW_TOTP_TOKEN", "-e", "GROWW_TOTP_SECRET",
+        "ghcr.io/srinivasannagarajarao-art/brokermcp:latest"
+      ],
+      "env": {
+        "LICENSE_KEY": "your-activation-key",
+        "GROWW_AUTH_METHOD": "totp",
+        "GROWW_TOTP_TOKEN": "your-token",
+        "GROWW_TOTP_SECRET": "your-secret"
+      }
+    }
+  }
+}</pre>
+    </div>
+  </section>
+
+  <!-- PRICING / ACTIVATE -->
+  <section class="section" id="pricing">
+    <div class="wrap">
+      <p class="sec-label">Activate</p>
+      <h2 class="sec-title">Pricing</h2>
+      <div class="activate">
+        <span class="soon">Pricing &amp; activation — being finalized</span>
+        <h3>One key, the full toolkit in Claude</h3>
+        <p>
+          Bring your own broker keys; the MCP runs on your machine. You pay for the
+          toolkit and the Claude integration — <strong style="color:var(--text)">not for
+          trading profits</strong>. By its own rigorous testing, this system has shown no
+          proven edge; what it sells is safe, capable tooling.
+        </p>
+        <a class="btn btn-primary" href="https://github.com/srinivasannagarajarao-art/brokermcp">Get updates on GitHub ↗</a>
+        <p class="fineprint">Self-hosted · your credentials stay local · DRY_RUN by default.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERFACES -->
+  <section class="section">
+    <div class="wrap">
+      <p class="sec-label">Three ways in</p>
+      <h2 class="sec-title">Same features, your choice of surface</h2>
+      <p class="sec-intro">Each is optional and independent — install only what you want.</p>
+      <div class="ifaces">
+        <div class="card reveal">
+          <span class="kicker">Terminal</span>
+          <h3>CLI</h3>
+          <p>The full toolkit from the command line — run a cycle, research, scan, report. No extra dependencies.</p>
+          <code>./trade · make run · python -m …</code>
+        </div>
+        <div class="card reveal">
+          <span class="kicker">HTTP</span>
+          <h3>FastAPI</h3>
+          <p>A documented REST surface with a Swagger UI at <code class="mono">/docs</code> — reads, research and gated orders.</p>
+          <code>make api → localhost:8000/docs</code>
+        </div>
+        <div class="card reveal">
+          <span class="kicker">Agents</span>
+          <h3>MCP server</h3>
+          <p>Tools for Claude and other MCP clients, shippable as a one-command Docker image.</p>
+          <code>make mcp · docker run … brokermcp</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK START -->
+  <section class="section" id="start">
+    <div class="wrap">
+      <p class="sec-label">Get going</p>
+      <h2 class="sec-title">Quick start</h2>
+      <p class="sec-intro">Clone it, set up Postgres and your credentials, and run a paper cycle — no real orders.</p>
+<pre class="code reveal"><span class="cmt"># 1 — install deps, create .env, start Postgres, migrate</span>
+make setup
+
+<span class="cmt"># 2 — a single paper evaluation (DRY_RUN forced on, no DB needed)</span>
+make dry-run
+
+<span class="cmt"># 3 — ask the honest question of a real symbol universe</span>
+make research SYMBOL=WIPRO,TCS,INFY DAYS=45
+<span class="ok"># → reads the verdict: robust / fragile / no-edge</span>
+</pre>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="disclaimer">
+      <strong style="color:var(--text)">Not investment advice.</strong>
+      BrokerMCP is software for automating your own trades. It defaults to
+      DRY_RUN and, by its own rigorous testing, has shown no proven edge. Markets carry risk;
+      you are responsible for every order you place and for complying with SEBI and exchange rules.
+    </div>
+    <div class="foot-row">
+      <span>broker<span style="color:var(--mint)">·</span>mcp — a safe trading MCP for Claude. Groww live; more brokers coming.</span>
+      <span><a href="https://github.com/srinivasannagarajarao-art/brokermcp">GitHub ↗</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
