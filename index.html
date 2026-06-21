@@ -25,308 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --ink: #0c1d22;
-    --panel: #102a31;
-    --panel-2: #16363f;
-    --line: #1f4750;
-    --text: #e8f0ec;
-    --muted: #8aa4a7;
-    --mint: #58cda3;     /* safe / robust / DRY — the affirming state */
-    --coral: #ec8266;    /* live / caution */
-    --amber: #d6b86a;    /* fragile — used ONLY in the verdict legend */
-    --maxw: 1100px;
-    --radius: 10px;
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  body {
-    margin: 0;
-    background: var(--ink);
-    color: var(--text);
-    font-family: "IBM Plex Sans", system-ui, sans-serif;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: var(--mint); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
-
-  /* ── top status bar ───────────────────────────────────────── */
-  header {
-    position: sticky; top: 0; z-index: 50;
-    background: rgba(12, 29, 34, 0.85);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--line);
-  }
-  .bar { display: flex; align-items: center; gap: 16px; height: 60px; }
-  .brand {
-    font-family: "Space Grotesk", sans-serif; font-weight: 700;
-    font-size: 1.05rem; letter-spacing: -0.01em; color: var(--text);
-  }
-  .brand:hover { text-decoration: none; }
-  .brand .tick { color: var(--mint); }
-  .pill {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem;
-    color: var(--mint); border: 1px solid var(--line);
-    background: rgba(88, 205, 163, 0.07);
-    padding: 4px 10px; border-radius: 999px; white-space: nowrap;
-  }
-  .bar nav { margin-left: auto; display: flex; gap: 20px; align-items: center; }
-  .bar nav a {
-    color: var(--muted); font-size: 0.86rem; font-weight: 500;
-  }
-  .bar nav a:hover { color: var(--text); text-decoration: none; }
-  .ghbtn {
-    color: var(--text) !important; border: 1px solid var(--line);
-    padding: 7px 14px; border-radius: 8px; font-size: 0.84rem;
-  }
-  .ghbtn:hover { border-color: var(--mint); text-decoration: none; }
-  @media (max-width: 760px) { .bar nav .navlink { display: none; } }
-  /* On phones, drop the flavor pill so brand + GitHub always fit (no overflow). */
-  @media (max-width: 560px) {
-    .pill { display: none; }
-    .wrap { padding: 0 18px; }
-    .bar { gap: 10px; }
-  }
-
-  /* ── hero ─────────────────────────────────────────────────── */
-  .hero { padding: 84px 0 64px; }
-  .eyebrow {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.78rem;
-    color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
-    margin-bottom: 22px;
-  }
-  h1 {
-    font-family: "Space Grotesk", sans-serif; font-weight: 700;
-    font-size: clamp(2.1rem, 5.2vw, 3.4rem); line-height: 1.08;
-    letter-spacing: -0.02em; margin: 0 0 22px; max-width: 16ch;
-  }
-  h1 .em { color: var(--mint); }
-  .lede { font-size: 1.12rem; color: var(--muted); max-width: 60ch; margin: 0 0 32px; }
-  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 56px; }
-  .btn {
-    font-family: "IBM Plex Sans", sans-serif; font-weight: 600; font-size: 0.95rem;
-    padding: 12px 22px; border-radius: 9px; cursor: pointer; border: 1px solid transparent;
-  }
-  .btn-primary { background: var(--mint); color: #06231a !important; }
-  .btn-primary:hover { text-decoration: none; filter: brightness(1.07); }
-  .btn-ghost { border-color: var(--line); color: var(--text) !important; }
-  .btn-ghost:hover { border-color: var(--mint); text-decoration: none; }
-
-  /* ── signature: the research-verdict terminal ─────────────── */
-  .term {
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: var(--radius); overflow: hidden; max-width: 820px;
-    box-shadow: 0 24px 60px -30px rgba(0,0,0,0.7);
-  }
-  .term-top {
-    display: flex; align-items: center; gap: 8px;
-    padding: 11px 16px; border-bottom: 1px solid var(--line);
-    background: var(--panel-2);
-  }
-  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--line); }
-  .term-title {
-    margin-left: 8px; font-family: "IBM Plex Mono", monospace;
-    font-size: 0.76rem; color: var(--muted);
-    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .term-body {
-    padding: 18px 20px; font-family: "IBM Plex Mono", monospace;
-    font-size: 0.82rem; line-height: 1.85; overflow-x: auto;
-  }
-  .term-body .ln { white-space: pre; }
-  .c-mut { color: var(--muted); }
-  .c-mint { color: var(--mint); }
-  .c-coral { color: var(--coral); }
-  .c-amber { color: var(--amber); }
-  .prompt { color: var(--mint); }
-
-  /* ── generic section ──────────────────────────────────────── */
-  .section { padding: 64px 0; border-top: 1px solid var(--line); }
-  .sec-label {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.74rem;
-    color: var(--mint); letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-  .sec-title {
-    font-family: "Space Grotesk", sans-serif; font-weight: 700;
-    font-size: clamp(1.5rem, 3.4vw, 2.1rem); letter-spacing: -0.01em;
-    margin: 0 0 14px;
-  }
-  .sec-intro { color: var(--muted); max-width: 64ch; margin: 0 0 36px; font-size: 1.02rem; }
-
-  /* ── capability grid ──────────────────────────────────────── */
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  @media (max-width: 880px) { .grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 580px) { .grid { grid-template-columns: 1fr; } }
-  .card {
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 22px;
-    transition: border-color .18s ease, transform .18s ease;
-  }
-  .card:hover { border-color: var(--mint); transform: translateY(-3px); }
-  @media (prefers-reduced-motion: reduce) { .card:hover { transform: none; } }
-  .card h3 {
-    font-family: "Space Grotesk", sans-serif; font-weight: 700;
-    font-size: 1.08rem; margin: 0 0 6px;
-  }
-  .card .kicker {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.68rem;
-    color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase;
-    display: block; margin-bottom: 12px;
-  }
-  .card p { color: var(--muted); font-size: 0.92rem; margin: 0 0 14px; }
-  .card code {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.76rem;
-    color: var(--text); background: var(--ink);
-    border: 1px solid var(--line); border-radius: 6px;
-    padding: 3px 8px; display: inline-block;
-  }
-
-  /* ── safety band ──────────────────────────────────────────── */
-  .band { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 36px; }
-  .safety-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 24px; }
-  @media (max-width: 720px) { .safety-grid { grid-template-columns: 1fr; } }
-  .safety-grid h4 {
-    font-family: "Space Grotesk", sans-serif; font-size: 1rem; margin: 0 0 6px;
-    display: flex; align-items: center; gap: 9px;
-  }
-  .safety-grid p { color: var(--muted); font-size: 0.92rem; margin: 0; }
-  .flag {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.66rem; font-weight: 600;
-    padding: 2px 8px; border-radius: 5px;
-  }
-  .flag-dry { color: var(--mint); border: 1px solid var(--mint); }
-  .flag-live { color: var(--coral); border: 1px solid var(--coral); }
-
-  /* ── verdict legend ───────────────────────────────────────── */
-  .legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
-  .verdict {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.82rem;
-    border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px;
-    flex: 1; min-width: 220px;
-  }
-  .verdict b { display: block; margin-bottom: 4px; font-size: 0.9rem; }
-  .verdict span { color: var(--muted); font-family: "IBM Plex Sans", sans-serif; font-size: 0.84rem; }
-  .v-robust b { color: var(--mint); }
-  .v-fragile b { color: var(--amber); }
-  .v-noedge b { color: var(--muted); }
-
-  /* ── interfaces ───────────────────────────────────────────── */
-  .ifaces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  @media (max-width: 720px) { .ifaces { grid-template-columns: 1fr; } }
-
-  /* ── quickstart ───────────────────────────────────────────── */
-  .steps { font-family: "IBM Plex Mono", monospace; font-size: 0.85rem; }
-  pre.code {
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 20px 22px; overflow-x: auto; font-family: "IBM Plex Mono", monospace;
-    font-size: 0.84rem; line-height: 1.9; color: var(--text); margin: 0;
-  }
-  pre.code .cmt { color: var(--muted); }
-  pre.code .ok { color: var(--mint); }
-
-  /* ── footer ───────────────────────────────────────────────── */
-  footer { border-top: 1px solid var(--line); padding: 44px 0 60px; color: var(--muted); }
-  .disclaimer {
-    border: 1px solid var(--line); border-left: 3px solid var(--coral);
-    border-radius: 8px; padding: 16px 20px; margin-bottom: 28px;
-    font-size: 0.88rem; color: var(--muted); background: var(--panel);
-  }
-  .foot-row { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 0.85rem; }
-
-  /* ── architecture: two systems, one broker ───────────────── */
-  .arch { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 720px) { .arch { grid-template-columns: 1fr; } }
-  .sys {
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 24px;
-    min-width: 0;  /* let the panel shrink so .flow scrolls internally, no page overflow */
-  }
-  .sys h3 { font-family: "Space Grotesk", sans-serif; font-size: 1.1rem; margin: 0 0 4px; }
-  .sys .kicker {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; color: var(--muted);
-    letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-bottom: 14px;
-  }
-  .flow {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; color: var(--text);
-    background: var(--ink); border: 1px solid var(--line); border-radius: 8px;
-    padding: 12px 14px; margin: 0 0 14px; overflow-x: auto; white-space: nowrap;
-  }
-  .flow .arrow { color: var(--mint); }
-  .sys p { color: var(--muted); font-size: 0.92rem; margin: 0; }
-  .choke {
-    margin-top: 16px; border: 1px solid var(--line); border-left: 3px solid var(--mint);
-    border-radius: 8px; padding: 14px 18px; background: var(--panel);
-    font-size: 0.92rem; color: var(--muted);
-  }
-  .choke b { color: var(--text); }
-
-  /* ── validation pipeline (a real ordered sequence) ────────── */
-  .pipe { display: flex; flex-direction: column; gap: 0; margin-top: 8px; }
-  .stage { display: grid; grid-template-columns: 56px 1fr; gap: 18px; padding: 18px 0; border-top: 1px solid var(--line); }
-  .stage:first-child { border-top: 0; }
-  .stage .no {
-    font-family: "IBM Plex Mono", monospace; font-size: 1.1rem; font-weight: 600;
-    color: var(--mint);
-  }
-  .stage h4 { font-family: "Space Grotesk", sans-serif; font-size: 1.02rem; margin: 0 0 4px; }
-  .stage p { color: var(--muted); font-size: 0.92rem; margin: 0; }
-  .stage code {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.74rem; color: var(--text);
-    background: var(--ink); border: 1px solid var(--line); border-radius: 5px; padding: 2px 7px;
-  }
-
-  /* ── won't do (honest non-features) ───────────────────────── */
-  .nots { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; margin-top: 8px; }
-  @media (max-width: 640px) { .nots { grid-template-columns: 1fr; } }
-  .nots li { list-style: none; padding-left: 26px; position: relative; color: var(--muted); font-size: 0.95rem; }
-  .nots { padding: 0; margin: 8px 0 0; }
-  .nots li::before {
-    content: "✕"; position: absolute; left: 0; top: 0;
-    color: var(--coral); font-family: "IBM Plex Mono", monospace; font-weight: 600;
-  }
-  .nots li b { color: var(--text); font-weight: 600; }
-
-  /* ── supported platforms ──────────────────────────────────── */
-  .brokers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-  @media (max-width: 820px) { .brokers { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 440px) { .brokers { grid-template-columns: 1fr; } }
-  .broker {
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; min-width: 0;
-  }
-  .broker .bname { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 1rem; }
-  .status {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.62rem; font-weight: 600;
-    padding: 3px 9px; border-radius: 999px; white-space: nowrap;
-  }
-  .status-live { color: var(--mint); border: 1px solid var(--mint); }
-  .status-soon { color: var(--muted); border: 1px solid var(--line); }
-
-  /* ── pricing / activate (placeholder) ─────────────────────── */
-  .activate {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
-    padding: 40px 36px; text-align: center; max-width: 640px; margin: 0 auto;
-  }
-  .activate .soon {
-    font-family: "IBM Plex Mono", monospace; font-size: 0.7rem; color: var(--amber);
-    border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px;
-    display: inline-block; margin-bottom: 20px;
-  }
-  .activate h3 { font-family: "Space Grotesk", sans-serif; font-size: 1.4rem; margin: 0 0 12px; }
-  .activate p { color: var(--muted); margin: 0 auto 24px; max-width: 48ch; }
-  .btn-disabled { background: var(--panel-2); color: var(--muted) !important; border: 1px solid var(--line); cursor: default; }
-  .btn-disabled:hover { text-decoration: none; filter: none; }
-  .fineprint { font-size: 0.82rem; color: var(--muted); margin-top: 18px; }
-
-  :focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
-</style>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -391,8 +90,8 @@
       </p>
       <div class="brokers">
         <div class="broker"><span class="bname">Groww</span><span class="status status-live">● Live</span></div>
-        <div class="broker"><span class="bname">Zerodha</span><span class="status status-soon">Coming</span></div>
-        <div class="broker"><span class="bname">Upstox</span><span class="status status-soon">Coming</span></div>
+        <a class="broker" href="zerodha.html"><span class="bname">Zerodha</span><span class="status status-soon">Coming ↗</span></a>
+        <a class="broker" href="upstox.html"><span class="bname">Upstox</span><span class="status status-soon">Coming ↗</span></a>
         <div class="broker"><span class="bname">More</span><span class="status status-soon">Planned</span></div>
       </div>
     </div>
@@ -476,39 +175,28 @@
     </div>
   </section>
 
-  <!-- ARCHITECTURE -->
+  <!-- HOW IT WORKS -->
   <section class="section" id="architecture">
     <div class="wrap">
-      <p class="sec-label">How it's built</p>
-      <h2 class="sec-title">Two systems, one broker</h2>
+      <p class="sec-label">How it works</p>
+      <h2 class="sec-title">Claude drives it — through one guarded path</h2>
       <p class="sec-intro">
-        A deterministic code path and an AI-agent path run in parallel and share a
-        single broker. Neither can reach the market except through one guarded write
-        — so the safety switch governs everything, no matter who pulls the trigger.
+        You work entirely from Claude. Every request flows through the MCP tools to your
+        broker, and every order passes one guarded write — so the safety switch governs
+        everything, no matter what you ask for.
       </p>
-      <div class="arch">
-        <div class="sys">
-          <span class="kicker">Deterministic</span>
-          <h3>Code path</h3>
-          <p class="flow">python main.py <span class="arrow">→</span> core/ broker <span class="arrow">→</span> Strategy <span class="arrow">→</span> Postgres</p>
-          <p>Your rules, headless and repeatable. A strategy reads prices, decides, and
-          the runner sizes, risk-checks, places, and records — hydrating open positions
-          on restart so it's idempotent.</p>
-        </div>
-        <div class="sys">
-          <span class="kicker">Assisted</span>
-          <h3>Agent path</h3>
-          <p class="flow">claude /intraday-trade <span class="arrow">→</span> sub-agents <span class="arrow">→</span> MCP tools</p>
-          <p>Research, signal, and risk sub-agents reason over the same data through MCP
-          tools. Insulated from the broker — only the execution step can place an order,
-          and it obeys the same gates.</p>
-        </div>
+      <div class="sys">
+        <span class="kicker">Claude → tools → broker</span>
+        <p class="flow">Claude <span class="arrow">→</span> MCP tools <span class="arrow">→</span> your broker <span class="arrow">→</span> the write chokepoint</p>
+        <p>Ask in plain language; Claude reads prices, runs research, and proposes
+        trades through the MCP tools. Only the execution step can place an order, and it
+        obeys the same gates whether the answer came from you or the model.</p>
       </div>
       <div class="choke">
-        <b>The write chokepoint.</b> Every mutating call routes through one guard that
-        honours DRY_RUN, rate-limits under SEBI's algo threshold, stamps the Algo-ID,
-        and degrades to a structured rejection instead of crashing. Add a new order
-        type and it goes through here too — there is no other door.
+        <b>The write chokepoint.</b> Every order routes through one guard that honours
+        DRY_RUN, rate-limits under SEBI's algo threshold, stamps the Algo-ID, and
+        degrades to a structured rejection instead of crashing. There is no other door
+        to the market.
       </div>
     </div>
   </section>
@@ -706,59 +394,20 @@
           trading profits</strong>. By its own rigorous testing, this system has shown no
           proven edge; what it sells is safe, capable tooling.
         </p>
-        <a class="btn btn-primary" href="https://github.com/srinivasannagarajarao-art/brokermcp">Get updates on GitHub ↗</a>
+        <!-- Activate the waitlist: create a free form at formspree.io and replace
+             YOUR_FORM_ID with your form's id (e.g. xyzabcd). Works on static Pages. -->
+        <form class="waitlist" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+          <input type="email" name="email" required placeholder="you@email.com"
+                 aria-label="Email address" />
+          <button type="submit" class="btn btn-primary">Join the waitlist</button>
+        </form>
+        <p class="or">or</p>
+        <a class="btn btn-ghost" href="https://github.com/srinivasannagarajarao-art/brokermcp">Get updates on GitHub ↗</a>
         <p class="fineprint">Self-hosted · your credentials stay local · DRY_RUN by default.</p>
       </div>
     </div>
   </section>
 
-  <!-- INTERFACES -->
-  <section class="section">
-    <div class="wrap">
-      <p class="sec-label">Three ways in</p>
-      <h2 class="sec-title">Same features, your choice of surface</h2>
-      <p class="sec-intro">Each is optional and independent — install only what you want.</p>
-      <div class="ifaces">
-        <div class="card reveal">
-          <span class="kicker">Terminal</span>
-          <h3>CLI</h3>
-          <p>The full toolkit from the command line — run a cycle, research, scan, report. No extra dependencies.</p>
-          <code>./trade · make run · python -m …</code>
-        </div>
-        <div class="card reveal">
-          <span class="kicker">HTTP</span>
-          <h3>FastAPI</h3>
-          <p>A documented REST surface with a Swagger UI at <code class="mono">/docs</code> — reads, research and gated orders.</p>
-          <code>make api → localhost:8000/docs</code>
-        </div>
-        <div class="card reveal">
-          <span class="kicker">Agents</span>
-          <h3>MCP server</h3>
-          <p>Tools for Claude and other MCP clients, shippable as a one-command Docker image.</p>
-          <code>make mcp · docker run … brokermcp</code>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- QUICK START -->
-  <section class="section" id="start">
-    <div class="wrap">
-      <p class="sec-label">Get going</p>
-      <h2 class="sec-title">Quick start</h2>
-      <p class="sec-intro">Clone it, set up Postgres and your credentials, and run a paper cycle — no real orders.</p>
-<pre class="code reveal"><span class="cmt"># 1 — install deps, create .env, start Postgres, migrate</span>
-make setup
-
-<span class="cmt"># 2 — a single paper evaluation (DRY_RUN forced on, no DB needed)</span>
-make dry-run
-
-<span class="cmt"># 3 — ask the honest question of a real symbol universe</span>
-make research SYMBOL=WIPRO,TCS,INFY DAYS=45
-<span class="ok"># → reads the verdict: robust / fragile / no-edge</span>
-</pre>
-    </div>
-  </section>
 </main>
 
 <footer>
@@ -776,5 +425,29 @@ make research SYMBOL=WIPRO,TCS,INFY DAYS=45
   </div>
 </footer>
 
+<script>
+  // Scroll spy: highlight the nav link for the section currently in view.
+  // Pure styling — never hides content; degrades to no-op without IntersectionObserver.
+  (function () {
+    if (!('IntersectionObserver' in window)) return;
+    var links = {};
+    document.querySelectorAll('header nav a.navlink').forEach(function (a) {
+      links[a.getAttribute('href').slice(1)] = a;
+    });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var id = en.target.id, link = links[id];
+        if (!link) return;
+        Object.values(links).forEach(function (l) { l.classList.remove('active'); });
+        link.classList.add('active');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    Object.keys(links).forEach(function (id) {
+      var s = document.getElementById(id);
+      if (s) io.observe(s);
+    });
+  })();
+</script>
 </body>
 </html>
