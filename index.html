@@ -424,29 +424,6 @@
   </div>
 </footer>
 
-<script>
-  // Scroll spy: highlight the nav link for the section currently in view.
-  // Pure styling — never hides content; degrades to no-op without IntersectionObserver.
-  (function () {
-    if (!('IntersectionObserver' in window)) return;
-    var links = {};
-    document.querySelectorAll('header nav a.navlink').forEach(function (a) {
-      links[a.getAttribute('href').slice(1)] = a;
-    });
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        var id = en.target.id, link = links[id];
-        if (!link) return;
-        Object.values(links).forEach(function (l) { l.classList.remove('active'); });
-        link.classList.add('active');
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-    Object.keys(links).forEach(function (id) {
-      var s = document.getElementById(id);
-      if (s) io.observe(s);
-    });
-  })();
-</script>
+<script src="app.js" defer></script>
 </body>
 </html>

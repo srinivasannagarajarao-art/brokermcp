@@ -338,3 +338,7 @@ a.broker .bname { color: var(--text); }
 /* capability cards that link to the features page */
 a.card { text-decoration: none; color: inherit; display: block; }
 a.card:hover { text-decoration: none; }
+
+/* AJAX waitlist result messages */
+.form-ok { color: var(--mint); font-family: "IBM Plex Mono", monospace; font-size: 0.95rem; margin: 4px 0; }
+.form-err { color: var(--coral); font-size: 0.85rem; margin: 6px 0 0; }
